@@ -6,6 +6,7 @@ import os
 import os.path as osp
 import zipfile
 from torch.utils.data import Dataset, DataLoader
+import networkx as nx
 
 from torch_geometric.data import Dataset as GeoDataset
 from torch_geometric.data import DataLoader as GeoDataLoader
@@ -13,13 +14,18 @@ from torch_geometric.data import Data, Batch
 
 from transformers import BertTokenizerFast
 
+from rdkit import Chem
+from rdkit.Chem import Draw
+
+
 class BasicData():
-  def __init__(self, text_trunc_length, path_train, path_val, path_test, path_molecules, path_token_embs):
+  def __init__(self, text_trunc_length, path_train, path_val, path_test, path_molecules, path_token_embs,name):
     self.path_train = path_train
     self.path_val = path_val
     self.path_test = path_test
     self.path_molecules = path_molecules
     self.path_token_embs = path_token_embs
+    self.name = name
 
     self.text_trunc_length = text_trunc_length 
 
@@ -27,7 +33,6 @@ class BasicData():
 
     if path_molecules is not None:  
       self.load_substructures()
-
 
     self.store_descriptions()
     
@@ -57,31 +62,31 @@ class BasicData():
     self.mols = {}
 
     self.training_cids = []
-    #get training set cids...
-    with open(self.path_train,encoding='utf-8') as f:
-      reader = csv.DictReader(f, delimiter="\t", quoting=csv.QUOTE_NONE, fieldnames = ['cid', 'mol2vec', 'desc'])
-      for n, line in enumerate(reader):
-        self.descriptions[line['cid']] = line['desc']
-        self.mols[line['cid']] = line['mol2vec']
-        self.training_cids.append(line['cid'])
-        
     self.validation_cids = []
-    #get validation set cids...
-    with open(self.path_val,encoding='utf-8') as f:
-      reader = csv.DictReader(f, delimiter="\t", quoting=csv.QUOTE_NONE, fieldnames = ['cid', 'mol2vec', 'desc'])
-      for n, line in enumerate(reader):
-        self.descriptions[line['cid']] = line['desc']
-        self.mols[line['cid']] = line['mol2vec']
-        self.validation_cids.append(line['cid'])
-
     self.test_cids = []
-    #get test set cids...
-    with open(self.path_test,encoding='utf-8') as f:
-      reader = csv.DictReader(f, delimiter="\t", quoting=csv.QUOTE_NONE, fieldnames = ['cid', 'mol2vec', 'desc'])
-      for n, line in enumerate(reader):
-        self.descriptions[line['cid']] = line['desc']
-        self.mols[line['cid']] = line['mol2vec']
-        self.test_cids.append(line['cid'])
+    #get training set cids...
+    read_lst = [self.path_train, self.path_val, self.path_test]
+    cids = [self.training_cids,self.validation_cids,self.test_cids]
+    tot = 0
+    for i in range(3):
+      path = read_lst[i]
+      cid = cids[i]
+      with open(path,encoding='utf-8') as f:
+        if self.name == 'CHEBI':
+          reader = csv.DictReader(f, delimiter="\t", quoting=csv.QUOTE_NONE, fieldnames = ['cid', 'mol2vec', 'desc'])
+          for n, line in enumerate(reader):
+            self.descriptions[line['cid']] = line['desc']
+            self.mols[line['cid']] = line['mol2vec']
+            cid.append(line['cid'])
+        elif self.name == 'PCDes':
+          context = f.readlines()
+          for line in context:
+            self.descriptions[str(tot)] = line
+            cid.append(str(tot))
+            tot+=1
+    print(len(self.training_cids))
+    print(len(self.validation_cids))
+    print(len(self.test_cids))
 
   def generate_examples_train(self):
     """Yields examples."""
@@ -100,7 +105,7 @@ class BasicData():
                 'attention_mask': text_input['attention_mask'].squeeze(),
               },
               'molecule' : {
-                    'mol2vec' : np.fromstring(self.mols[cid], sep = " "),
+                    'mol2vec' : np.fromstring(self.mols[cid], sep = " ") if self.name == 'CHEBI' else torch.zeros(1),
                     'cid' : cid
               },
           },
@@ -126,7 +131,7 @@ class BasicData():
                   'attention_mask': text_input['attention_mask'].squeeze(),
                 },
                 'molecule' : {
-                    'mol2vec' : np.fromstring(self.mols[cid], sep = " "),
+                    'mol2vec' : np.fromstring(self.mols[cid], sep = " ")  if self.name == 'CHEBI' else torch.zeros(1),
                     'cid' : cid
                 }
             },
@@ -152,7 +157,7 @@ class BasicData():
                   'attention_mask': text_input['attention_mask'].squeeze(),
                 },
                 'molecule' : {
-                    'mol2vec' : np.fromstring(self.mols[cid], sep = " "),
+                    'mol2vec' : np.fromstring(self.mols[cid], sep = " ")  if self.name == 'CHEBI' else torch.zeros(1),
                     'cid' : cid
                 }
             },
@@ -194,13 +199,13 @@ def get_dataloader(data_generator, params):
     return training_generator, validation_generator, test_generator
 
 class MoleculeGraphDataset(GeoDataset):
-    def __init__(self, root, cids, data_path, gt, transform=None, pre_transform=None):
+    def __init__(self, root, cids, data_path, gt, name,transform=None, pre_transform=None):
         self.cids = cids
         self.data_path = data_path
         self.gt = gt
-        
+        self.name = name
         super(MoleculeGraphDataset, self).__init__(root, transform, pre_transform)
-        
+      
         self.idx_to_cid = {}
         i = 0
         for raw_path in self.raw_paths:
@@ -221,11 +226,12 @@ class MoleculeGraphDataset(GeoDataset):
 
     def download(self):
         # Download to `self.raw_dir`.
-        print(self.raw_dir)
-        print(osp.join(self.raw_dir, "mol_graphs.zip"))
-        print(osp.exists(osp.join(self.raw_dir, "mol_graphs.zip")))
-        if not osp.exists(osp.join(self.raw_dir, "mol_graphs.zip")):
-            shutil.copy(self.data_path, os.path.join(self.raw_dir, "mol_graphs.zip"))
+        if self.name == 'CHEBI':
+          print(self.raw_dir)
+          print(osp.join(self.raw_dir, "mol_graphs.zip"))
+          print(osp.exists(osp.join(self.raw_dir, "mol_graphs.zip")))
+          if not osp.exists(osp.join(self.raw_dir, "mol_graphs.zip")):
+              shutil.copy(self.data_path, os.path.join(self.raw_dir, "mol_graphs.zip"))
         
     def process_graph(self, raw_path):
       edge_index  = []
@@ -248,26 +254,33 @@ class MoleculeGraphDataset(GeoDataset):
 
         return torch.LongTensor(edge_index).T, torch.FloatTensor(x)
 
-
-
     def process(self):
-        with zipfile.ZipFile(osp.join(self.raw_dir, "mol_graphs.zip"), 'r') as zip_ref:
-            zip_ref.extractall(self.raw_dir)
-
+        if self.name =='CHEBI':
+          with zipfile.ZipFile(osp.join(self.raw_dir, "mol_graphs.zip"), 'r') as zip_ref:
+              zip_ref.extractall(self.raw_dir)
+          length = len(self.raw_paths)
+        elif self.name == 'PCDes':
+          with open(self.data_path,encoding='utf-8') as f:
+             smiles = f.readlines()
+          length = len(smiles)
 
         i = 0
-        print(len(self.raw_paths))
-        for raw_path in self.raw_paths:
+        for idx in range(length):
             # Read data from `raw_path`.
             if i%100==0:
                print(i)
-            if len(raw_path.split('/')) != 1:
-                cid = int(raw_path.split('/')[-1][:-6])
-            else:
-                cid = int(raw_path.split('\\')[-1][:-6])
+            if self.name == 'CHEBI':
+              raw_path = self.raw_paths[idx]
+              if len(raw_path.split('/')) != 1:
+                  cid = int(raw_path.split('/')[-1][:-6])
+              else:
+                  cid = int(raw_path.split('\\')[-1][:-6])
 
-
-            edge_index, x = self.process_graph(raw_path)
+              edge_index, x = self.process_graph(raw_path)
+            elif self.name == 'PCDes':
+              smile = smiles[idx]
+              cid = idx
+              edge_index, x = self.smiles_to_edge_index(smile)
             data = Data(x=x, edge_index = edge_index)
 
             if self.pre_filter is not None and not self.pre_filter(data):
@@ -289,6 +302,18 @@ class MoleculeGraphDataset(GeoDataset):
     def get_cid(self, cid):
         data = torch.load(osp.join(self.processed_dir, 'data_{}.pt'.format(cid)))
         return data
+    
+    def smiles_to_edge_index(self,smiles):
+      molecule = Chem.MolFromSmiles(smiles)
+      num_atoms = molecule.GetNumAtoms()
+      edge_index = []
+
+      for bond in molecule.GetBonds():
+          start_idx = bond.GetBeginAtomIdx()
+          end_idx = bond.GetEndAtomIdx()
+          edge_index.append((start_idx,end_idx))
+
+      return torch.LongTensor(edge_index).T, torch.FloatTensor(torch.zeros(num_atoms,16))
 
 #To get specific lists...
 
@@ -306,24 +331,20 @@ class CustomGraphCollater(object):
         raise TypeError('DataLoader found invalid type: {}'.format(type(elem)))
 
     def __call__(self, cids):
-      
         return self.collate([self.dataset.get_cid(int(cid)) for cid in cids])
 
 
-def get_graph_data(data_generator, graph_data_path):
+def get_graph_data(data_generator, graph_data_path,name):
     root = osp.join(graph_data_path[:-len(osp.basename(graph_data_path))], 'graph-data/')
-    #graph_data_path = "input/mol_graphs.zip"
     if not os.path.exists(root):
         os.mkdir(root)
+    mg_data_tr = MoleculeGraphDataset(root, data_generator.training_cids, graph_data_path, data_generator,name)
+    graph_batcher_tr = CustomGraphCollater(mg_data_tr)
 
-    #mg_data_tr = MoleculeGraphDataset(root, data_generator.training_cids, graph_data_path, data_generator)
-    #graph_batcher_tr = CustomGraphCollater(mg_data_tr)
-
-    mg_data_val = MoleculeGraphDataset(root, data_generator.validation_cids, graph_data_path, data_generator)
+    mg_data_val = MoleculeGraphDataset(root, data_generator.validation_cids, graph_data_path, data_generator,name)
     graph_batcher_val = CustomGraphCollater(mg_data_val)
 
-    #mg_data_test = MoleculeGraphDataset(root, data_generator.test_cids, graph_data_path, data_generator)
-    #graph_batcher_test = CustomGraphCollater(mg_data_test)
+    mg_data_test = MoleculeGraphDataset(root, data_generator.test_cids, graph_data_path, data_generator,name)
+    graph_batcher_test = CustomGraphCollater(mg_data_test)
 
-    #return graph_batcher_tr, graph_batcher_val, graph_batcher_test
-    return graph_batcher_val
+    return graph_batcher_tr, graph_batcher_val, graph_batcher_test
