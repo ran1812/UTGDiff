@@ -1,0 +1,8 @@
+selfies
+rdkit
+transformers
+nltk
+periodictable
+datasets
+tqdm
+fastNLP
