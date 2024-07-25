@@ -1,0 +1,7 @@
+Loss at step 199 is 189.04476930618287
+hybrid_loss_token at step 199 is 1.997218062877655
+base_loss_token at step 199 is 4.056837841272354
+hybrid_loss_edge at step 199 is 68.61655232429504
+base_loss_edge at step 199 is 114.37416219234467
+
+
