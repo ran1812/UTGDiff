@@ -1,5 +1,7 @@
 # UTGDiff
 
+The model checkpoint is saved at https://drive.google.com/drive/folders/18EqQ7MDHesmtiMiZz2o09PyeSwyf0hXb?usp=drive_link
+
 ## Generation
 
 Train:
