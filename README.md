@@ -2,6 +2,8 @@
 
 The model checkpoint is saved at https://drive.google.com/drive/folders/18EqQ7MDHesmtiMiZz2o09PyeSwyf0hXb?usp=drive_link
 
+The generation & editing results is saved at ./generation/generation_results and ./editing/generation_results
+
 ## Generation
 
 Train:
