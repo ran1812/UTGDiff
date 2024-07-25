@@ -2,6 +2,8 @@
 
 The model checkpoint is saved at https://drive.google.com/drive/folders/18EqQ7MDHesmtiMiZz2o09PyeSwyf0hXb?usp=drive_link
 
+To load the pretrain checkpoint, you can put the files in ./pretrain_model under pretrain_mixed5 folder; To load the diffusion checkpoint, you can put the files in folder and change the --ckpt_path in in predict_downstream_dist.py file 
+
 The generation & editing results is saved at ./generation/generation_results and ./editing/generation_results
 
 ## Generation
