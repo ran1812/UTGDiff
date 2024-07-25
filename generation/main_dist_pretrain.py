@@ -160,15 +160,15 @@ if __name__ == '__main__':
     model.resize_token_embeddings(len(tokenizer))
 
     #model.load_state_dict(torch.load('./new_save/40.dist_ori/best(479999).th', map_location=lambda storage, loc: storage.cuda(local_rank))['model'])
-    ''''''
+    '''
     ckpt = torch.load('./new_save/49.single_pretrain4/best(809999).th',map_location=device)['model']
     new_checkpoint = {} 
     for k,value in ckpt.items():
         key = k.split('module.')[-1]
         new_checkpoint[key] = value
     model.load_state_dict(new_checkpoint, strict=True)
-    
-    i=809999
+    '''
+    i=-1
 
 
     model = DDP(model)
