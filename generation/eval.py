@@ -25,5 +25,10 @@ test_list = test_list[:len(test_list)]
 truth_list = truth_list[:len(test_list)]
 
 
-ans = fingerprint(test_list,truth_list,'MACCS')
+ans = fingerprint(test_list,truth_list,'MACCS') #MACCS
+ans = fingerprint(test_list,truth_list,'RDK') #RDK
+ans = fingerprint(test_list,truth_list,'Morgan') #Morgan
+ans = fcd(test_list,truth_list) #fcd
+ans = cal_exact(test_list,truth_list) #exact
+ans = cal_valid(test_list) #valid
 print(ans)
