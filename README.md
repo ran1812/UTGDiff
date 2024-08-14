@@ -79,6 +79,9 @@ After training, to sample from the model, run:
 ```
 python predict_downstream_dist.py
 ```
+
+Also, change the --ckpt_path argument in predict_downstream_dist.py to your model, or you can download the model in the ./editing dir from google drive as your generation model.
+
 To eval the sampling results, run:
 
 eval:
