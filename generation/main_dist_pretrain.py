@@ -105,7 +105,7 @@ if __name__ == '__main__':
     else:
         raise NotImplementedError
 
-    tokenizer = tok_cls.from_pretrained('./pretrain_mixed5')
+    tokenizer = tok_cls.from_pretrained('./pretrain_model')
 
     word_freq = torch.zeros(len(tokenizer))
     assert word_freq.size(0) == len(tokenizer)
@@ -146,13 +146,13 @@ if __name__ == '__main__':
 
     if args.load_step > 0:
         ckpt = torch.load(os.path.join(save_path, f'{args.load_step}.th'))
-    cfg = cfg_cls.from_pretrained('./pretrain_mixed5')
+    cfg = cfg_cls.from_pretrained('./pretrain_model')
     print(cfg)
 
     if args.from_scratch:
         model = model_cls(cfg).to(device)
     elif args.load_step <= 0:
-        model = model_cls.from_pretrained('./pretrain_mixed5', config=cfg).to(device)
+        model = model_cls.from_pretrained('./pretrain_model', config=cfg).to(device)
     else:
         model = model_cls(cfg).to(device)
         model.load_state_dict(ckpt['model'])
