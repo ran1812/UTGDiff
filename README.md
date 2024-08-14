@@ -69,11 +69,11 @@ cd ./editing/
 
 For molecule editing, we choose the MOIfp and MOIretro as our datasets. The datasets files are under ./dataset of google drive, put it under editing/dataset as the preperation of datasets.
 
-To load the pretrain checkpoint, you can put the files in ./pretrain_model from google drive under the ./editing folder, then run:
+To load the pretrain checkpoint, you can put the files in ./pretrain_model from google drive under the ./editing folder, then run: (choose an existing path as save_path)
 
 Train:
 ```
-CUDA_VISIBLE_DEVICES=0,1 torchrun --nproc_per_node 2 --master_port 29501 main_dist_pretrain.py
+CUDA_VISIBLE_DEVICES=0,1 torchrun --nproc_per_node 2 --master_port 29501 main_dist_pretrain.py --task_name {MOIretro/MOIfp} --save_path {...}
 ```
 After training, to sample from the model, run:
 ```
