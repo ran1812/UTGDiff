@@ -1,6 +1,6 @@
 selfies
 rdkit
-transformers
+transformers==4.36.2
 nltk
 periodictable
 datasets
