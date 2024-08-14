@@ -32,8 +32,6 @@ To train the model from roberta-base, run the below command directly:
 CUDA_VISIBLE_DEVICES=0,1 torchrun --nproc_per_node 2 --master_port 29501 main_dist.py
 ```
 
-To train the model from the pretrain model roberta-base, run the below command directly:
-
 To load the pretrain checkpoint, you can put the files in ./pretrain_model from google drive under the ./generation folder, then run:
 
 ```
@@ -61,17 +59,33 @@ All the metrics are left in the file, choose the metric you need.
 
 ## Editing
 
+The generation code is under the ./editing dir
+
+```
+cd ./editing/
+```
+
+For molecule editing, we choose the MOIfp and MOIretro as our datasets. The datasets files are under ./dataset of google drive, put it under editing/dataset as the preperation of datasets.
+
+To load the pretrain checkpoint, you can put the files in ./pretrain_model from google drive under the ./editing folder, then run:
+
 Train:
 
 CUDA_VISIBLE_DEVICES=0,1 torchrun --nproc_per_node 2 --master_port 29501 main_dist_pretrain.py
 
-sampling:
+After training, to sample from the model, run:
 
 python predict_downstream_dist.py
 
+To eval the sampling results, run:
+
 eval:
 
+```
 python eval_MOIretro.py
 
 python eval_MOIfp.py
+```
+
+Add the metrics you need as the code under the generation part.
 
