@@ -9,22 +9,28 @@ This is the code for the Paper: Instruction-Based Molecular Graph Generation wit
 The basic environment requirement is pytorch, here's an example for environment setup:
 
 ```
-cd text-graph-diffusion/
+cd ./text-graph-diffusion/
 conda create -n UTGDiff python=3.10
 conda activate UTGDiff
 conda install pytorch torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia
 pip install -r requirements.txt 
 ```
 
-The model checkpoint is saved at https://drive.google.com/drive/folders/18EqQ7MDHesmtiMiZz2o09PyeSwyf0hXb?usp=drive_link
+All the model checkpoint is saved at https://drive.google.com/drive/folders/18EqQ7MDHesmtiMiZz2o09PyeSwyf0hXb?usp=drive_link
+
+## Generation
+
+The generation code is under the ./generation dir
+
+```
+cd ./generation/
+```
 
 To load the pretrain checkpoint, you can put the files in ./pretrain_model under pretrain_mixed5 folder; To load the diffusion checkpoint, you can put the files in folder and change the --ckpt_path in in predict_downstream_dist.py file 
 
 The generation & editing results is saved at ./generation/generation_results and ./editing/generation_results
 
-## Generation
-
-Train:
+The CHEBI-20 dataset has been put under the dataset/CHEBI To train our model with Train:
 
 CUDA_VISIBLE_DEVICES=0,1 torchrun --nproc_per_node 2 --master_port 29501 main_dist.py
 
