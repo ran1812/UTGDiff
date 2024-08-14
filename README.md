@@ -40,6 +40,13 @@ To load the pretrain checkpoint, you can put the files in ./pretrain_model under
 CUDA_VISIBLE_DEVICES=0,1 torchrun --nproc_per_node 2 --master_port 29501 main_dist_pretrain.py
 ```
 
+After training, to sample from the model, run:
+
+```
+python predict_downstream_dist.py
+python aro.py
+```
+
 The generation & editing results is saved at ./generation/generation_results and ./editing/generation_results
 
 
