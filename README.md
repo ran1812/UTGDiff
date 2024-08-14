@@ -1,5 +1,7 @@
 # Instruction-Based Molecular Graph Generation with Unified Text-Graph Diffusion Model (UTGDiff)
 
+This is the code for the Paper: Instruction-Based Molecular Graph Generation with Unified Text-Graph Diffusion Model
+
 The model checkpoint is saved at https://drive.google.com/drive/folders/18EqQ7MDHesmtiMiZz2o09PyeSwyf0hXb?usp=drive_link
 
 To load the pretrain checkpoint, you can put the files in ./pretrain_model under pretrain_mixed5 folder; To load the diffusion checkpoint, you can put the files in folder and change the --ckpt_path in in predict_downstream_dist.py file 
