@@ -34,7 +34,7 @@ CUDA_VISIBLE_DEVICES=0,1 torchrun --nproc_per_node 2 --master_port 29501 main_di
 
 To train the model from the pretrain model roberta-base, run the below command directly:
 
-To load the pretrain checkpoint, you can put the files in ./pretrain_model under the ./generation folder, then run:
+To load the pretrain checkpoint, you can put the files in ./pretrain_model from google drive under the ./generation folder, then run:
 
 ```
 CUDA_VISIBLE_DEVICES=0,1 torchrun --nproc_per_node 2 --master_port 29501 main_dist_pretrain.py
@@ -47,18 +47,17 @@ python predict_downstream_dist.py
 python aro.py
 ```
 
-The generation & editing results is saved at ./generation/generation_results and ./editing/generation_results
+change the --ckpt_path argument in predict_downstream_dist.py to your model, or you can download the model in the ./generation dir from google drive as your generation model.
 
+We have provide a generation result saved at ./generation/generation_results
 
-sampling:
+To eval the sampling results, run:
 
-python predict_downstream_dist.py
-
-python aro.py
-
-eval:
-
+```
 python eval.py
+```
+
+Change the 
 
 ## Editing
 
