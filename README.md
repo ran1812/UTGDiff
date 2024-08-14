@@ -2,6 +2,8 @@
 
 This is the code for the Paper: Instruction-Based Molecular Graph Generation with Unified Text-Graph Diffusion Model
 
+UTGDiff incorporates attention bias into the vanilla transformer, forming a unified text-graph transformer that serves as a denoising network for discrete graph diffusion to generate molecular graphs from instructions. Noise decays some nodes and edges into [MASK] during training (forward process), with the reverse process aiming to recover original graphs as the training objective. Sampling starts with a masked graph and iterates T times to reduce noise. The framework are as follows:
+
 ![Overview of UTGDiff](./overview_final.png)
 
 ## Environment setup
