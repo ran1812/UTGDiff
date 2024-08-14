@@ -57,7 +57,7 @@ To eval the sampling results, run:
 python eval.py
 ```
 
-Change the 
+All the metrics are left in the file, choose the metric you need.
 
 ## Editing
 
