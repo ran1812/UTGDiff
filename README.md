@@ -70,13 +70,13 @@ For molecule editing, we choose the MOIfp and MOIretro as our datasets. The data
 To load the pretrain checkpoint, you can put the files in ./pretrain_model from google drive under the ./editing folder, then run:
 
 Train:
-
+```
 CUDA_VISIBLE_DEVICES=0,1 torchrun --nproc_per_node 2 --master_port 29501 main_dist_pretrain.py
-
+```
 After training, to sample from the model, run:
-
+```
 python predict_downstream_dist.py
-
+```
 To eval the sampling results, run:
 
 eval:
