@@ -87,5 +87,5 @@ python eval_MOIretro.py
 python eval_MOIfp.py
 ```
 
-Add the metrics you need as the code under the generation part.
+Add the metrics you need as the code under the generation part.  We have provide the editing result saved at ./editing/generation_results
 
