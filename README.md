@@ -30,19 +30,18 @@ To train the model from roberta-base, run the below command directly:
 
 ```
 CUDA_VISIBLE_DEVICES=0,1 torchrun --nproc_per_node 2 --master_port 29501 main_dist.py
-``` 
+```
 
-To load the pretrain checkpoint, you can put the files in ./pretrain_model under pretrain_mixed5 folder; To load the diffusion checkpoint, you can put the files in folder and change the --ckpt_path in in predict_downstream_dist.py file 
+To train the model from the pretrain model roberta-base, run the below command directly:
+
+To load the pretrain checkpoint, you can put the files in ./pretrain_model under the ./generation folder, then run:
+
+```
+CUDA_VISIBLE_DEVICES=0,1 torchrun --nproc_per_node 2 --master_port 29501 main_dist_pretrain.py
+```
 
 The generation & editing results is saved at ./generation/generation_results and ./editing/generation_results
 
-The CHEBI-20 dataset has been put under the dataset/CHEBI To train our model with Train:
-
-CUDA_VISIBLE_DEVICES=0,1 torchrun --nproc_per_node 2 --master_port 29501 main_dist.py
-
-or 
-
-CUDA_VISIBLE_DEVICES=0,1 torchrun --nproc_per_node 2 --master_port 29501 main_dist_pretrain.py
 
 sampling:
 
