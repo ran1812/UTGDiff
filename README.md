@@ -4,7 +4,17 @@ This is the code for the Paper: Instruction-Based Molecular Graph Generation wit
 
 ![Overview of UTGDiff](./overview_final.png)
 
-## Usage
+## Environment setup
+
+The basic environment requirement is pytorch, here's an example for environment setup:
+
+```
+cd text-graph-diffusion/
+conda create -n UTGDiff python=3.10
+conda activate UTGDiff
+conda install pytorch torchvision torchaudio pytorch-cuda=12.1 -c pytorch -c nvidia
+pip install -r requirements.txt 
+```
 
 The model checkpoint is saved at https://drive.google.com/drive/folders/18EqQ7MDHesmtiMiZz2o09PyeSwyf0hXb?usp=drive_link
 
