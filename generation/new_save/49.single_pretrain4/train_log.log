@@ -1,0 +1,11 @@
+Loss at step 199 is 1.403852181667462
+hybrid_loss_token at step 199 is 0.10531705134548247
+base_loss_token at step 199 is 0.2076913510763552
+hybrid_loss_edge at step 199 is 0.36866529155639
+base_loss_edge at step 199 is 0.7221784901391948
+text_loss at step 199 is 0.0
+accumulation_steps at step 199 is 4
+learning_rate at step 199 is 1.6833333333333317e-05
+
+
+
