@@ -47,7 +47,7 @@ python aro.py
 
 change the --ckpt_path argument in predict_downstream_dist.py to your model, or you can download the model in the ./generation dir from google drive as your generation model.
 
-We have provide a generation result saved at ./generation/generation_results
+We have provide a generation result saved at ./generation/generation_results; We have provided the log for CHEBI datasets in google drive, under ./log
 
 To eval the sampling results, run:
 
@@ -87,5 +87,5 @@ python eval_MOIretro.py
 python eval_MOIfp.py
 ```
 
-Add the metrics you need as the code under the generation part.  We have provide the editing result saved at ./editing/generation_results
+Add the metrics you need as the code under the generation part.  We have provided the editing result saved at ./editing/generation_results. We have provided the log for two editing datasets in google drive, under ./log
 
