@@ -20,6 +20,18 @@ pip install -r requirements.txt
 
 All the model checkpoint is saved at https://drive.google.com/drive/folders/18EqQ7MDHesmtiMiZz2o09PyeSwyf0hXb?usp=drive_link
 
+## dataset
+
+The pretrain data are open-sourced on huggingface, including:
+
+```
+zpn/zinc20
+ncbi/pubmed
+acharkq/PubChem324kV2
+```
+
+The fine-tuning data are included in google drive or corresponding folder in this repo. See the corresponding section in the readme.
+
 ## Generation
 
 The generation code is under the ./generation dir
