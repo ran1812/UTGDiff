@@ -115,7 +115,7 @@ def main():
         new_cache_dir = os.path.join(cache_base_dir, 'final_processed_new')
         try:
             tokenized_datasets = load_from_disk(final_cache_dir)
-            tokenized_datasets = tokenized_datasets.select(range(10000))
+            tokenized_datasets = tokenized_datasets
             tokenizer.model_max_length = 256
             max_seq_length = tokenizer.model_max_length - 128
             tokenized_datasets = tokenized_datasets.remove_columns(['input_ids', 'attention_mask', 'edge', 'smiles'])
@@ -125,7 +125,7 @@ def main():
             print(raw_datasets_text)
 
             raw_datasets_graph = load_dataset("./zinc.py", split="train")
-            raw_datasets_graph = raw_datasets_graph.select(range(10000))
+            raw_datasets_graph = raw_datasets_graph
             def pre_func(examples):
                 return {'text': examples['smiles'],'type':'graph'}
             raw_datasets_graph = raw_datasets_graph.map(
@@ -137,7 +137,6 @@ def main():
             raw_datasets_graph = raw_datasets_graph.remove_columns(['smiles', 'id', 'selfies'])
             mixed_dataset = concatenate_datasets([raw_datasets_text, raw_datasets_graph])
             print(mixed_dataset)
-            exit()
             
             def selfies_func(examples):
                 if examples['type'] == 'graph':
@@ -148,8 +147,7 @@ def main():
                 selfies_func,
                 batched=False, 
             )
-            print(category_count)
-            exit()
+
             tokenized_datasets.save_to_disk(new_cache_dir)
 
 
