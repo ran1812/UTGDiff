@@ -32,6 +32,14 @@ acharkq/PubChem324kV2
 
 The fine-tuning data are included in google drive or corresponding folder in this repo. See the corresponding section in the readme.
 
+## Pretrain
+
+Run the pretrain code under ./generation dir:
+
+```
+python pretrain.py
+```
+
 ## Generation
 
 The generation code is under the ./generation dir
